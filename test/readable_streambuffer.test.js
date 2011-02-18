@@ -18,6 +18,10 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			assert.isTrue(aStreamBuffer.readable);
 		},
 		
+		"is not writable": function(aStreamBuffer) {
+			assert.isFalse(aStreamBuffer.writable);
+		},
+		
 		"is empty": function(aStreamBuffer) {
 			assert.equal(aStreamBuffer.size(), 0);
 		},
@@ -245,6 +249,41 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 		"chunks equal original value": function(chunks) {
 			assert.equal(chunks[0] + chunks[1], fixtures.simpleString);
+		}
+	},
+	
+	"Writing unicode data in two writes": {
+		topic: function() {
+			var that = this;
+
+			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+			aStreamBuffer.pause();
+			aStreamBuffer.put(fixtures.unicodeString);
+			aStreamBuffer.put(fixtures.unicodeString);
+			aStreamBuffer.resume();
+			aStreamBuffer.setEncoding("utf8");
+			aStreamBuffer.on("data", this.callback.bind(this, null));
+		},
+
+		"chunks equal original value": function(data) {
+			assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
+		}
+	},
+	
+	"Writing data after destroySoon()": {
+		topic: function() {
+			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+			aStreamBuffer.destroySoon();
+			aStreamBuffer.put(fixtures.basicString);
+			
+			// Check size of buffer now, as vows may go do other stuff.
+			aStreamBuffer._bufferSize = aStreamBuffer.size();
+			
+			return aStreamBuffer;
+		},
+		
+		"should be silently ignored": function(aStreamBuffer) {
+			assert.equal(aStreamBuffer._bufferSize, 0);
 		}
 	}
 }).export(module);
