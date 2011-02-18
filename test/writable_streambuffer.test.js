@@ -185,5 +185,45 @@ vows.describe("WritableStreamBuffer").addBatch({
 		"stream is no longer writable": function(aStreamBuffer) {
 			assert.isFalse(aStreamBuffer.writable);
 		}
+	},
+
+	"destroySoon() on stream": {
+		topic: function() {
+			var that = this;
+			
+			var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
+
+			aStreamBuffer.on("close", function() {
+				that.callback(null, aStreamBuffer);
+			});
+			
+			aStreamBuffer.write(fixtures.simpleString);
+			aStreamBuffer.destroySoon();
+		},
+
+		"sets *writable* to false": function(aStreamBuffer) {
+			assert.isFalse(aStreamBuffer.writable);
+		},
+		
+		"correct data is in buffer": function(aStreamBuffer) {
+			assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString);
+		}
+	},
+	
+	"Writing data after destroySoon()": {
+		topic: function() {
+			var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
+			aStreamBuffer.destroySoon();
+			aStreamBuffer.write(fixtures.basicString);
+			
+			// Check size of buffer now, as vows may go do other stuff.
+			aStreamBuffer._bufferSize = aStreamBuffer.size();
+			
+			return aStreamBuffer;
+		},
+		
+		"should be silently ignored": function(aStreamBuffer) {
+			assert.equal(aStreamBuffer._bufferSize, 0);
+		}
 	}
 }).export(module);

@@ -192,43 +192,6 @@ vows.describe("ReadableStreamBuffer").addBatch({
 		}
 	},
 	
-	"destroySoon() on stream": {
-		topic: function() {
-			var that = this;
-			
-			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-			aStreamBuffer.setEncoding("utf8");
-
-			aStreamBuffer.on("data", function(data) {
-				aStreamBuffer.dataCalled = data;
-			});
-			
-			aStreamBuffer.on("end", function() {
-				aStreamBuffer.endCalled = true;
-			});
-			
-			aStreamBuffer.on("close", function() {
-				that.callback(null, aStreamBuffer);
-			});
-			
-			aStreamBuffer.put(fixtures.simpleString);
-			aStreamBuffer.destroySoon();
-		},
-
-		"sets *readable* to false": function(aStreamBuffer) {
-			assert.isFalse(aStreamBuffer.readable);
-		},
-		
-		"*data* event was called and correct": function(aStreamBuffer) {
-			assert.isString(aStreamBuffer.dataCalled);
-			assert.equal(aStreamBuffer.dataCalled, fixtures.simpleString);
-		},
-				
-		"*end* event was called": function(aStreamBuffer) {
-			assert.isTrue(aStreamBuffer.endCalled);
-		}
-	},
-	
 	"Data written in two chunks": {
 		topic: function() {
 			var that = this;
@@ -267,23 +230,6 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 		"chunks equal original value": function(data) {
 			assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
-		}
-	},
-	
-	"Writing data after destroySoon()": {
-		topic: function() {
-			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-			aStreamBuffer.destroySoon();
-			aStreamBuffer.put(fixtures.basicString);
-			
-			// Check size of buffer now, as vows may go do other stuff.
-			aStreamBuffer._bufferSize = aStreamBuffer.size();
-			
-			return aStreamBuffer;
-		},
-		
-		"should be silently ignored": function(aStreamBuffer) {
-			assert.equal(aStreamBuffer._bufferSize, 0);
 		}
 	}
 }).export(module);
