@@ -106,3 +106,7 @@ Destroying the stream will immediately purge the buffer, unless destroySoon() is
 ## Disclaimer
 
 Not supposed to be a speed demon, it's more for tests/debugging or weird edge cases. It works with an internal buffer that it copies contents to/from/around.
+
+## License
+
+node-stream-buffer is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
