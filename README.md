@@ -1,5 +1,7 @@
 # Node Stream Buffers
 
+[![Build Status](https://travis-ci.org/samcday/node-stream-buffer.png)](https://travis-ci.org/samcday/node-stream-buffer)
+
 ... For lack of a cooler (or less confusing) name.
 
 Simple Readable and Writable Streams that use a Buffer to store received data, or for data to send out. Pretty much to be used for automated test-cases or debugging.
