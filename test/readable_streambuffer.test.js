@@ -233,5 +233,29 @@ vows.describe("ReadableStreamBuffer").addBatch({
 		"chunks equal original value": function(data) {
 			assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
 		}
+	},
+
+	"Incoming data larger than chunk size (Issue #5)": {
+		topic: function() {
+			var that = this;
+
+			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
+				chunkSize: 5,
+				initialSize: 10
+			});
+			aStreamBuffer.pause();
+			aStreamBuffer.put("HelloWorld");
+			var chunks = [];
+			aStreamBuffer.setEncoding("utf8");
+			aStreamBuffer.resume();
+			aStreamBuffer.on("data", function(data) {
+				chunks.push(data);
+				if(chunks.length == 2) that.callback(null, chunks);
+			});
+		},
+		"is chunked correctly": function(data) {
+			assert.equal(data[0], "Hello");
+			assert.equal(data[1], "World");
+		}
 	}
 }).export(module);
