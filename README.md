@@ -1,4 +1,4 @@
-# Node Stream Buffers
+# Node Stream Buffers `v0.2.5`
 
 [![Build Status](https://travis-ci.org/samcday/node-stream-buffer.png)](https://travis-ci.org/samcday/node-stream-buffer)
 
