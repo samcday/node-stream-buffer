@@ -1,6 +1,6 @@
 {
 	"name": "stream-buffers",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"description": "Buffer-backed Streams for reading and writing.",
 	"keywords": "memory streams, buffer streams",
 	"author": "Sam Day <sam.c.day@gmail.com>",
