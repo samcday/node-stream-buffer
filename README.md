@@ -92,7 +92,7 @@ Chunks are pumped out via standard readable stream spec:
 		assert.isTrue(data instanceof Buffer);
 	});
 
-Chunks are pumped out by the interval that you specified in frequency. Setting the frequency to 0 will immediately stream the data (also in chunks). This is useful for unit testing.
+Chunks are pumped out by the interval that you specified in frequency. Setting the frequency to 0 will immediately stream the data (also in chunks), even if the stream has not been piped to a destination. This is useful for unit testing. 
 
 setEncoding() for streams is respected too:
 
