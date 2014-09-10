@@ -1,6 +1,7 @@
 # Node Stream Buffers
 
-[![Build Status](https://travis-ci.org/samcday/node-stream-buffer.png)](https://travis-ci.org/samcday/node-stream-buffer)
+[![Build Status](http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square)](https://travis-ci.org/samcday/node-stream-buffer)
+[![Code Climate](http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square)](https://codeclimate.com/github/samcday/node-stream-buffer)
 
 ... For lack of a cooler (or less confusing) name.
 
