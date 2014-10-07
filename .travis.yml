@@ -1,8 +1,15 @@
 language: node_js
-node_js:
-- 0.10
-- 0.8
-- 0.6
+
+matrix:
+  include:
+    - node_js: '0.6'
+      env: NO_COVERAGE=1
+    - node_js: '0.8'
+      env: NO_COVERAGE=1
+    - node_js: '0.11'
+      env: NO_COVERAGE=1
+    - node_js: '0.10'
+
 deploy:
   provider: npm
   email: me@samcday.com.au
@@ -12,3 +19,12 @@ deploy:
     tags: true
     all_branches: true
     node_js: 0.10
+
+addons:
+  code_climate:
+    repo_token:
+      secure: "qoQoeJZrjiE7RmcGIZNmR2tO3/oP1NqlxhYkj1TYbMVOYmK4zsOdeVjhllkETZaGejKcw1uXEQx7caSmpZQ6lw5V5JXmyyTzo8xfAbanP9Wf4WXw5uSOaBDYR/DR2B9VfkHT7spPVwdoX09sgb+oTIy4IgBUivucm6IGmiw7PuY="
+
+after_script:
+  - npm install -g codeclimate-test-reporter
+  - cat coverage/lcov.info | codeclimate
