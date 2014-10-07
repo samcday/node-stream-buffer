@@ -1,6 +1,6 @@
 {
   "name": "stream-buffers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Buffer-backed Streams for reading and writing.",
   "keywords": [
     "memory streams",
