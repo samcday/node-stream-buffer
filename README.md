@@ -1,7 +1,8 @@
 # Node Stream Buffers
 
-[![Build Status](http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square)](https://travis-ci.org/samcday/node-stream-buffer)
-[![Code Climate](http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square)](https://codeclimate.com/github/samcday/node-stream-buffer)
+[![Build Status][badge-travis-img]][badge-travis-url]
+[![Code Climate][badge-climate-img]][badge-climate-url]
+[![Code Coverage][badge-coverage-img]][badge-coverage-url]
 
 ... For lack of a cooler (or less confusing) name.
 
@@ -124,3 +125,10 @@ Thanks to the following people for taking some time to contribute to this projec
 ## License
 
 node-stream-buffer is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
+
+[badge-travis-img]: http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square
+[badge-travis-url]: https://travis-ci.org/samcday/node-stream-buffer
+[badge-climate-img]: http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square
+[badge-climate-url]: https://codeclimate.com/github/samcday/node-stream-buffer
+[badge-coverage-img]: http://img.shields.io/codeclimate/coverage/github/samcday/node-stream-buffer.svg?style=flat-square
+[badge-coverage-url]: https://codeclimate.com/github/samcday/node-stream-buffer
