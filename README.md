@@ -1,20 +1,14 @@
-# Node Stream Buffers
-
 [![Build Status][badge-travis-img]][badge-travis-url]
 [![Code Climate][badge-climate-img]][badge-climate-url]
 [![Code Coverage][badge-coverage-img]][badge-coverage-url]
 
-... For lack of a cooler (or less confusing) name.
+# Node Stream Buffers
 
-Simple Readable and Writable Streams that use a Buffer to store received data, or for data to send out. Pretty much to be used for automated test-cases or debugging.
-
-[![NPM](https://nodei.co/npm/stream-buffers.png)](https://npmjs.org/package/stream-buffers)
+Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
 
 ## Installation
 
-It's on NPM.
-
-	npm install stream-buffers
+[![NPM][badge-npm-img]][badge-npm-url]
 
 ## Usage
 
@@ -132,3 +126,7 @@ node-stream-buffer is free and unencumbered public domain software. For more inf
 [badge-climate-url]: https://codeclimate.com/github/samcday/node-stream-buffer
 [badge-coverage-img]: http://img.shields.io/codeclimate/coverage/github/samcday/node-stream-buffer.svg?style=flat-square
 [badge-coverage-url]: https://codeclimate.com/github/samcday/node-stream-buffer
+[badge-npm-img]: https://nodei.co/npm/stream-buffers.png?downloads=true&downloadRank=true&stars=true
+[badge-npm-url]: https://npmjs.org/package/stream-buffers
+
+[node-buffer-docs]: http://nodejs.org/api/buffer.html
