@@ -1,8 +1,8 @@
+# Node Stream Buffers
+
 [![Build Status][badge-travis-img]][badge-travis-url]
 [![Code Climate][badge-climate-img]][badge-climate-url]
 [![Code Coverage][badge-coverage-img]][badge-coverage-url]
-
-# Node Stream Buffers
 
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
 
