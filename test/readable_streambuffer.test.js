@@ -257,5 +257,52 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			assert.equal(data[0], "Hello");
 			assert.equal(data[1], "World");
 		}
+	},
+
+	"Frequency 0": {
+		topic: function() {
+			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
+				chunkSize: 1,
+				frequency: 0
+			});
+			aStreamBuffer.setEncoding("utf8");
+			return aStreamBuffer;
+		},
+		"emits data immediately": function(streamBuffer) {
+			var dataCalled = false;
+			streamBuffer.once("data", function() {
+				dataCalled = true;
+			});
+
+			streamBuffer.put("a");
+			assert.isTrue(dataCalled);
+		},
+		"emits multiple chunks immediately": function(streamBuffer) {
+			var chunks = [];
+			var dataHandler = function(chunk) {
+				chunks.push(chunk);
+			};
+			streamBuffer.on("data", dataHandler);
+
+			streamBuffer.put("ab");
+			streamBuffer.removeListener("data", dataHandler);
+			assert.deepEqual(chunks, ["a", "b"]);
+		},
+		"emits end event immediately on destroySoon": function(streamBuffer) {
+			var endCalled = false;
+			var closeCalled = false;
+
+			streamBuffer.on("end", function() {
+				endCalled = true;
+			});
+
+			streamBuffer.on("close", function() {
+				closeCalled = true;
+			});
+
+			streamBuffer.destroySoon();
+			assert.isTrue(endCalled);
+			assert.isTrue(closeCalled);
+		}
 	}
 }).export(module);
