@@ -3,3 +3,4 @@
 /test/tmp
 /.idea
 *.iml
+coverage/
