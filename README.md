@@ -132,7 +132,7 @@ myReadableStreamBuffer.size();			// will be 0.
 
 ## Disclaimer
 
-Not supposed to be a speed demon, it's more for tests/debugging or weird edge cases. It works with an internal buffer that it copies contents to/from/around.
+Not supposed to be a speed daemon, it's more for tests/debugging or weird edge cases. It works with an internal buffer that it copies contents to/from/around.
 
 ## Contributors
 
