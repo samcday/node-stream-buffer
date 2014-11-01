@@ -81,7 +81,7 @@ The frequency in which chunks are pumped out, and the size of the chunks themsel
 
 ```js
 var myReadableStreamBuffer = new streamBuffers.ReadableStreamBuffer({
-	frequency: 10		// in milliseconds.
+	frequency: 10,		// in milliseconds.
 	chunkSize: 2048		// in bytes.
 });
 ```
