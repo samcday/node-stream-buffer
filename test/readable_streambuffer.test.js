@@ -28,6 +28,10 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 		"has default backing buffer size": function(aStreamBuffer) {
 			assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE);
+		},
+
+		teardown: function(aStreamBuffer) {
+			aStreamBuffer.destroy();
 		}
 	},
 
@@ -61,6 +65,10 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			"with correct contents": function(data) {
 				assert.equal(data, fixtures.simpleString);
 			}
+		},
+
+		teardown: function(aStreamBuffer) {
+			aStreamBuffer.destroy();
 		}
 	}
 }).addBatch({
@@ -70,6 +78,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			aStreamBuffer.on("data", this.callback.bind(this, null));
 
 			aStreamBuffer.put(fixtures.binaryData);
+			aStreamBuffer.destroySoon();
 		},
 
 		"results in a Buffer": function(data) {
@@ -95,6 +104,10 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 		"backing buffer is correct size": function(aStreamBuffer) {
 			assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE + streamBuffer.DEFAULT_INCREMENT_AMOUNT);
+		},
+
+		teardown: function(aStreamBuffer) {
+			aStreamBuffer.destroy();
 		}
 	},
 
@@ -108,6 +121,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 			aStreamBuffer.once("data", function(data) { that.callback(null, data); });
 			aStreamBuffer.put(fixtures.binaryData);
+			aStreamBuffer.destroySoon();
 		},
 
 		"gives us a Buffer with the correct length": function(data) {
@@ -126,6 +140,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 			aStreamBuffer.on("data", function(data) { that.callback(null, new Date().getTime() - startTime); });
 			aStreamBuffer.put(fixtures.binaryData);
+			aStreamBuffer.destroySoon();
 		},
 
 		"gave us data after the correct amount of time": function(time) {
@@ -156,6 +171,10 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			"gives us correct incremented size of backing buffer": function(aStreamBuffer) {
 				assert.equal(aStreamBuffer.maxSize(), 6);
 			}
+		},
+
+		teardown: function(aStreamBuffer) {
+			aStreamBuffer.destroy();
 		}
 	},
 
@@ -210,6 +229,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			});
 
 			aStreamBuffer.put(fixtures.simpleString);
+			aStreamBuffer.destroySoon();
 		},
 
 		"chunks equal original value": function(chunks) {
@@ -228,6 +248,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			aStreamBuffer.resume();
 			aStreamBuffer.setEncoding("utf8");
 			aStreamBuffer.on("data", this.callback.bind(this, null));
+			aStreamBuffer.destroySoon();
 		},
 
 		"chunks equal original value": function(data) {
@@ -252,6 +273,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 				chunks.push(data);
 				if(chunks.length == 2) that.callback(null, chunks);
 			});
+			aStreamBuffer.destroySoon();
 		},
 		"is chunked correctly": function(data) {
 			assert.equal(data[0], "Hello");
@@ -303,6 +325,9 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			streamBuffer.destroySoon();
 			assert.isTrue(endCalled);
 			assert.isTrue(closeCalled);
+		},
+		teardown: function(streamBuffer) {
+			streamBuffer.destroy();
 		}
 	}
 }).export(module);
