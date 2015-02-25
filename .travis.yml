@@ -16,7 +16,7 @@ deploy:
   on:
     tags: true
     all_branches: true
-    node_js: 0.10
+    node_js: 0.12
 
 addons:
   code_climate:
