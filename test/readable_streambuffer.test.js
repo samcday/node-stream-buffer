@@ -229,7 +229,6 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			});
 
 			aStreamBuffer.put(fixtures.simpleString);
-			aStreamBuffer.destroySoon();
 		},
 
 		"chunks equal original value": function(chunks) {
@@ -273,7 +272,6 @@ vows.describe("ReadableStreamBuffer").addBatch({
 				chunks.push(data);
 				if(chunks.length == 2) that.callback(null, chunks);
 			});
-			aStreamBuffer.destroySoon();
 		},
 		"is chunked correctly": function(data) {
 			assert.equal(data[0], "Hello");
