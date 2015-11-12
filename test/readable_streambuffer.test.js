@@ -330,4 +330,24 @@ vows.describe("ReadableStreamBuffer").addBatch({
 			streamBuffer.destroy();
 		}
 	}
+}).addBatch({
+	"Readable event":{
+		topic:function(){
+			var that = this;
+
+			var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+
+			aStreamBuffer.on("readable", function(){
+				var data = aStreamBuffer.read();
+				that.callback(null,data)
+			});
+
+			aStreamBuffer.setEncoding("utf8");
+			aStreamBuffer.put(fixtures.unicodeString);	
+		},
+
+		"Pumping out data through *aStreamBuffer.read()*":function(data){
+			assert.equal(data,fixtures.unicodeString);
+		}
+	}	
 }).export(module);
