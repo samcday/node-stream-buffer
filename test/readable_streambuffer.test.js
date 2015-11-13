@@ -344,6 +344,7 @@ vows.describe("ReadableStreamBuffer").addBatch({
 
 			aStreamBuffer.setEncoding("utf8");
 			aStreamBuffer.put(fixtures.unicodeString);	
+			astreamBuffer.destroySoon();
 		},
 
 		"Pumping out data through *aStreamBuffer.read()*":function(data){
