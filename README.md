@@ -1,14 +1,16 @@
 # Node Stream Buffers
 
 [![Build Status][badge-travis-img]][badge-travis-url]
+[![Dependency Information][badge-david-img]][badge-david-url]
 [![Code Climate][badge-climate-img]][badge-climate-url]
 [![Code Coverage][badge-coverage-img]][badge-coverage-url]
+[![npm][badge-npm-img]][badge-npm-url]
 
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
 
-## Installation
-
-[![NPM][badge-npm-img]][badge-npm-url]
+```
+npm install stream-buffers --save
+```
 
 ## Usage
 
@@ -147,11 +149,13 @@ node-stream-buffer is free and unencumbered public domain software. For more inf
 
 [badge-travis-img]: http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square
 [badge-travis-url]: https://travis-ci.org/samcday/node-stream-buffer
+[badge-david-img]: https://img.shields.io/david/samcday/node-stream-buffer.svg?style=flat-square
+[badge-david-url]: https://david-dm.org/samcday/node-stream-buffer
 [badge-climate-img]: http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square
 [badge-climate-url]: https://codeclimate.com/github/samcday/node-stream-buffer
 [badge-coverage-img]: http://img.shields.io/codeclimate/coverage/github/samcday/node-stream-buffer.svg?style=flat-square
 [badge-coverage-url]: https://codeclimate.com/github/samcday/node-stream-buffer
-[badge-npm-img]: https://nodei.co/npm/stream-buffers.png?downloads=true&downloadRank=true&stars=true
-[badge-npm-url]: https://npmjs.org/package/stream-buffers
+[badge-npm-img]: https://img.shields.io/npm/dm/stream-buffers.svg?style=flat-square
+[badge-npm-url]: https://www.npmjs.org/package/stream-buffers
 
 [node-buffer-docs]: http://nodejs.org/api/buffer.html
