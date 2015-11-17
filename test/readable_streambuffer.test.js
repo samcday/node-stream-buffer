@@ -1,354 +1,302 @@
 'use strict';
 
-var vows = require('vows');
-var assert = require('assert');
-var streamBuffer = require('../lib/streambuffer');
+var expect = require('chai').expect;
 var fixtures = require('./fixtures');
-var helpers = require('./helpers');
+var streamBuffer = require('../lib/streambuffer');
 
-vows.describe('ReadableStreamBuffer').addBatch({
-  'A ReadableStreamBuffer': {
-    topic: function() {
-      return new streamBuffer.ReadableStreamBuffer();
-    },
+describe('A default ReadableStreamBuffer', function() {
+  beforeEach(function() {
+    this.buffer = new streamBuffer.ReadableStreamBuffer();
+  });
 
-    'is a Stream': function(aStreamBuffer) {
-      assert.instanceOf(aStreamBuffer, require('stream').Stream);
-    },
+  it('is a Stream', function() {
+    expect(this.buffer).to.be.an.instanceOf(require('stream').Stream);
+  });
 
-    'is readable': function(aStreamBuffer) {
-      assert.isTrue(aStreamBuffer.readable);
-    },
+  it('is empty by default', function() {
+    expect(this.buffer.size()).to.equal(0);
+  });
 
-    'is not writable': function(aStreamBuffer) {
-      assert.isFalse(aStreamBuffer.writable);
-    },
+  it('has default backing buffer size', function() {
+    expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE);
+  });
 
-    'is empty': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.size(), 0);
-    },
-
-    'has default backing buffer size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE);
-    },
-
-    teardown: function(aStreamBuffer) {
-      aStreamBuffer.destroy();
-    }
-  },
-
-  'Paused with basic String contents': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-      aStreamBuffer.pause();
-      aStreamBuffer.put(fixtures.simpleString);
-      return aStreamBuffer;
-    },
-
-    'has correct size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.size(), fixtures.simpleString.length);
-    },
-
-    'has correct backing buffer size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE);
-    },
-
-    'and then resumed, with encoding set to utf8': {
-      topic: function(aStreamBuffer) {
-        aStreamBuffer.setEncoding('utf8');
-        aStreamBuffer.on('data', this.callback.bind(this, null));
-        aStreamBuffer.resume();
-      },
-
-      'results in a String': function(data) {
-        assert.isString(data);
-      },
-
-      'with correct contents': function(data) {
-        assert.equal(data, fixtures.simpleString);
-      }
-    },
-
-    teardown: function(aStreamBuffer) {
-      aStreamBuffer.destroy();
-    }
-  }
-}).addBatch({
-  'Writing binary data': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-      aStreamBuffer.on('data', this.callback.bind(this, null));
-
-      aStreamBuffer.put(fixtures.binaryData);
-      aStreamBuffer.destroySoon();
-    },
-
-    'results in a Buffer': function(data) {
-      assert.instanceOf(data, Buffer);
-    },
-
-    'with the correct data': function(data) {
-      helpers.assertBuffersEqual(data, fixtures.binaryData);
-    }
-  },
-
-  'Writing binary data larger than initial backing buffer size': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-      aStreamBuffer.pause();
-      aStreamBuffer.put(fixtures.largeBinaryData);
-      return aStreamBuffer;
-    },
-
-    'buffer is correct size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.size(), fixtures.largeBinaryData.length);
-    },
-
-    'backing buffer is correct size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE + streamBuffer.DEFAULT_INCREMENT_AMOUNT);
-    },
-
-    teardown: function(aStreamBuffer) {
-      aStreamBuffer.destroy();
-    }
-  },
-
-  'Setting custom chunk size': {
-    topic: function() {
+  describe('when writing binary data', function() {
+    beforeEach(function(done) {
       var that = this;
+      this.buffer.put(fixtures.binaryData);
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-        chunkSize: 2
+      this.buffer.once('readable', function() {
+        that.data = that.buffer.read();
+        done();
       });
+    });
 
-      aStreamBuffer.once('data', function(data) { that.callback(null, data); });
-      aStreamBuffer.put(fixtures.binaryData);
-      aStreamBuffer.destroySoon();
-    },
+    it('results in a Buffer', function() {
+      expect(this.data).to.be.an.instanceOf(Buffer);
+    });
 
-    'gives us a Buffer with the correct length': function(data) {
-      assert.equal(data.length, 2);
-    }
-  },
+    it('with the correct data', function() {
+      expect(this.data).to.deep.equal(fixtures.binaryData);
+    });
+  });
 
-  'Setting a custom frequency': {
-    topic: function() {
-      var that = this,
-        startTime = new Date().getTime();
+  describe('when writing binary data larger than initial backing buffer size', function() {
+    beforeEach(function() {
+      this.buffer.pause();
+      this.buffer.put(fixtures.largeBinaryData);
+    });
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-        frequency: 300
-      });
+    it('buffer is correct size', function() {
+      expect(this.buffer.size()).to.equal(fixtures.largeBinaryData.length);
+    });
 
-      aStreamBuffer.on('data', function() { that.callback(null, new Date().getTime() - startTime); });
-      aStreamBuffer.put(fixtures.binaryData);
-      aStreamBuffer.destroySoon();
-    },
+    it('backing buffer is correct size', function() {
+      expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE + streamBuffer.DEFAULT_INCREMENT_AMOUNT);
+    });
+  });
+});
 
-    'gave us data after the correct amount of time': function(time) {
-      // Wtfux: sometimes the timer is coming back a millisecond or two
-      // faster. So we do a 'close-enough' assertion here ;)
-      assert.isTrue(time >= 295);
-    }
-  },
+describe('A ReadableStreamBuffer using custom chunk size', function() {
+  beforeEach(function(done) {
+    var that = this;
 
-  'Setting a custom initial size and increment amount': {
-    topic: function() {
-      return new streamBuffer.ReadableStreamBuffer({
-        initialSize: 1,
-        incrementAmount: 5
-      });
-    },
+    this.buffer = new streamBuffer.ReadableStreamBuffer({
+      chunkSize: 2
+    });
 
-    'gives us correct initial backing buffer size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), 1);
-    },
+    this.buffer.once('readable', function() {
+      that.data = that.buffer.read();
+      done();
+    });
+    this.buffer.put(fixtures.binaryData);
+  });
 
-    'and writing to size of initial size': {
-      topic: function(aStreamBuffer) {
-        aStreamBuffer.put('ab');
-        return aStreamBuffer;
-      },
+  it('yields a Buffer with the correct data', function() {
+    expect(this.data).to.deep.equal(fixtures.binaryData.slice(0, 2));
+  });
+});
 
-      'gives us correct incremented size of backing buffer': function(aStreamBuffer) {
-        assert.equal(aStreamBuffer.maxSize(), 6);
-      }
-    },
+describe('A ReadableStreamBuffer using custom frequency', function() {
+  beforeEach(function(done) {
+    var that = this;
+    var startTime = new Date().getTime();
 
-    teardown: function(aStreamBuffer) {
-      aStreamBuffer.destroy();
-    }
-  },
+    this.buffer = new streamBuffer.ReadableStreamBuffer({
+      frequency: 300
+    });
 
-  'Destroying stream': {
-    topic: function() {
-      var that = this;
+    this.buffer.once('readable', function() {
+      that.time = new Date().getTime() - startTime;
+      done();
+    });
+    this.buffer.put(fixtures.binaryData);
+  });
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+  it('gave us data after the correct amount of time', function() {
+    // Wtfux: sometimes the timer is coming back a millisecond or two
+    // faster. So we do a 'close-enough' assertion here ;)
+    expect(this.time).to.be.at.least(295);
+  });
 
-      aStreamBuffer.on('data', function() {
-        aStreamBuffer.dataCalled = true;
-      });
+//   'Setting a custom initial size and increment amount': {
+//     topic: function() {
+//       return new streamBuffer.ReadableStreamBuffer({
+//         initialSize: 1,
+//         incrementAmount: 5
+//       });
+//     },
 
-      aStreamBuffer.on('end', function() {
-        aStreamBuffer.endCalled = true;
-      });
+//     'gives us correct initial backing buffer size': function(aStreamBuffer) {
+//       assert.equal(aStreamBuffer.maxSize(), 1);
+//     },
 
-      aStreamBuffer.on('close', function() {
-        that.callback(null, aStreamBuffer);
-      });
+//     'and writing to size of initial size': {
+//       topic: function(aStreamBuffer) {
+//         aStreamBuffer.put('ab');
+//         return aStreamBuffer;
+//       },
 
-      aStreamBuffer.put('asdf');
-      aStreamBuffer.destroy();
-    },
+//       'gives us correct incremented size of backing buffer': function(aStreamBuffer) {
+//         assert.equal(aStreamBuffer.maxSize(), 6);
+//       }
+//     },
 
-    'sets *readable* to false': function(aStreamBuffer) {
-      assert.isFalse(aStreamBuffer.readable);
-    },
+//     teardown: function(aStreamBuffer) {
+//       aStreamBuffer.destroy();
+//     }
+//   },
 
-    '*data* event was never called': function(aStreamBuffer) {
-      assert.isFalse(aStreamBuffer.dataCalled || false);
-    },
+//   'Destroying stream': {
+//     topic: function() {
+//       var that = this;
 
-    '*end* event was called': function(aStreamBuffer) {
-      assert.isTrue(aStreamBuffer.endCalled);
-    }
-  },
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
 
-  'Data written in two chunks': {
-    topic: function() {
-      var that = this;
+//       aStreamBuffer.on('data', function() {
+//         aStreamBuffer.dataCalled = true;
+//       });
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-        chunkSize: Math.ceil(fixtures.simpleString.length / 2)
-      });
-      aStreamBuffer.setEncoding('utf8');
+//       aStreamBuffer.on('end', function() {
+//         aStreamBuffer.endCalled = true;
+//       });
 
-      var chunks = [];
-      aStreamBuffer.on('data', function(data) {
-        chunks.push(data);
-        if(chunks.length == 2) that.callback(null, chunks);
-      });
+//       aStreamBuffer.on('close', function() {
+//         that.callback(null, aStreamBuffer);
+//       });
 
-      aStreamBuffer.put(fixtures.simpleString);
-      aStreamBuffer.destroySoon();
-    },
+//       aStreamBuffer.put('asdf');
+//       aStreamBuffer.destroy();
+//     },
 
-    'chunks equal original value': function(chunks) {
-      assert.equal(chunks[0] + chunks[1], fixtures.simpleString);
-    }
-  },
+//     'sets *readable* to false': function(aStreamBuffer) {
+//       assert.isFalse(aStreamBuffer.readable);
+//     },
 
-  'Writing unicode data in two writes': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-      aStreamBuffer.pause();
-      aStreamBuffer.put(fixtures.unicodeString);
-      aStreamBuffer.put(fixtures.unicodeString);
-      aStreamBuffer.resume();
-      aStreamBuffer.setEncoding('utf8');
-      aStreamBuffer.on('data', this.callback.bind(this, null));
-      aStreamBuffer.destroySoon();
-    },
+//     '*data* event was never called': function(aStreamBuffer) {
+//       assert.isFalse(aStreamBuffer.dataCalled || false);
+//     },
 
-    'chunks equal original value': function(data) {
-      assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
-    }
-  },
+//     '*end* event was called': function(aStreamBuffer) {
+//       assert.isTrue(aStreamBuffer.endCalled);
+//     }
+//   },
 
-  'Incoming data larger than chunk size (Issue #5)': {
-    topic: function() {
-      var that = this;
+//   'Data written in two chunks': {
+//     topic: function() {
+//       var that = this;
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-        chunkSize: 5,
-        initialSize: 10
-      });
-      aStreamBuffer.pause();
-      aStreamBuffer.put('HelloWorld');
-      var chunks = [];
-      aStreamBuffer.setEncoding('utf8');
-      aStreamBuffer.resume();
-      aStreamBuffer.on('data', function(data) {
-        chunks.push(data);
-        if(chunks.length == 2) that.callback(null, chunks);
-      });
-      aStreamBuffer.destroySoon();
-    },
-    'is chunked correctly': function(data) {
-      assert.equal(data[0], 'Hello');
-      assert.equal(data[1], 'World');
-    }
-  },
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
+//         chunkSize: Math.ceil(fixtures.simpleString.length / 2)
+//       });
+//       aStreamBuffer.setEncoding('utf8');
 
-  'Frequency 0': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-        chunkSize: 1,
-        frequency: 0
-      });
-      aStreamBuffer.setEncoding('utf8');
-      return aStreamBuffer;
-    },
-    'emits data immediately': function(streamBuffer) {
-      var dataCalled = false;
-      streamBuffer.once('data', function() {
-        dataCalled = true;
-      });
+//       var chunks = [];
+//       aStreamBuffer.on('data', function(data) {
+//         chunks.push(data);
+//         if(chunks.length == 2) that.callback(null, chunks);
+//       });
 
-      streamBuffer.put('a');
-      assert.isTrue(dataCalled);
-    },
-    'emits multiple chunks immediately': function(streamBuffer) {
-      var chunks = [];
-      var dataHandler = function(chunk) {
-        chunks.push(chunk);
-      };
-      streamBuffer.on('data', dataHandler);
+//       aStreamBuffer.put(fixtures.simpleString);
+//       aStreamBuffer.destroySoon();
+//     },
 
-      streamBuffer.put('ab');
-      streamBuffer.removeListener('data', dataHandler);
-      assert.deepEqual(chunks, ['a', 'b']);
-    },
-    'emits end event immediately on destroySoon': function(streamBuffer) {
-      var endCalled = false;
-      var closeCalled = false;
+//     'chunks equal original value': function(chunks) {
+//       assert.equal(chunks[0] + chunks[1], fixtures.simpleString);
+//     }
+//   },
 
-      streamBuffer.on('end', function() {
-        endCalled = true;
-      });
+//   'Writing unicode data in two writes': {
+//     topic: function() {
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+//       aStreamBuffer.pause();
+//       aStreamBuffer.put(fixtures.unicodeString);
+//       aStreamBuffer.put(fixtures.unicodeString);
+//       aStreamBuffer.resume();
+//       aStreamBuffer.setEncoding('utf8');
+//       aStreamBuffer.on('data', this.callback.bind(this, null));
+//       aStreamBuffer.destroySoon();
+//     },
 
-      streamBuffer.on('close', function() {
-        closeCalled = true;
-      });
+//     'chunks equal original value': function(data) {
+//       assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
+//     }
+//   },
 
-      streamBuffer.destroySoon();
-      assert.isTrue(endCalled);
-      assert.isTrue(closeCalled);
-    },
-    teardown: function(streamBuffer) {
-      streamBuffer.destroy();
-    }
-  }
-}).addBatch({
-  'Readable event':{
-    topic:function(){
-      var that = this;
+//   'Incoming data larger than chunk size (Issue #5)': {
+//     topic: function() {
+//       var that = this;
 
-      var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
+//         chunkSize: 5,
+//         initialSize: 10
+//       });
+//       aStreamBuffer.pause();
+//       aStreamBuffer.put('HelloWorld');
+//       var chunks = [];
+//       aStreamBuffer.setEncoding('utf8');
+//       aStreamBuffer.resume();
+//       aStreamBuffer.on('data', function(data) {
+//         chunks.push(data);
+//         if(chunks.length == 2) that.callback(null, chunks);
+//       });
+//       aStreamBuffer.destroySoon();
+//     },
+//     'is chunked correctly': function(data) {
+//       assert.equal(data[0], 'Hello');
+//       assert.equal(data[1], 'World');
+//     }
+//   },
 
-      aStreamBuffer.on('readable', function(){
-        var data = aStreamBuffer.read();
-        that.callback(null,data);
-      });
+//   'Frequency 0': {
+//     topic: function() {
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
+//         chunkSize: 1,
+//         frequency: 0
+//       });
+//       aStreamBuffer.setEncoding('utf8');
+//       return aStreamBuffer;
+//     },
+//     'emits data immediately': function(streamBuffer) {
+//       var dataCalled = false;
+//       streamBuffer.once('data', function() {
+//         dataCalled = true;
+//       });
 
-      aStreamBuffer.setEncoding('utf8');
-      aStreamBuffer.put(fixtures.unicodeString);  
-      aStreamBuffer.destroySoon();
-    },
+//       streamBuffer.put('a');
+//       assert.isTrue(dataCalled);
+//     },
+//     'emits multiple chunks immediately': function(streamBuffer) {
+//       var chunks = [];
+//       var dataHandler = function(chunk) {
+//         chunks.push(chunk);
+//       };
+//       streamBuffer.on('data', dataHandler);
 
-    'Pumping out data through *aStreamBuffer.read()*':function(data){
-      assert.equal(data,fixtures.unicodeString);
-    }
-  } 
-}).export(module);
+//       streamBuffer.put('ab');
+//       streamBuffer.removeListener('data', dataHandler);
+//       assert.deepEqual(chunks, ['a', 'b']);
+//     },
+//     'emits end event immediately on destroySoon': function(streamBuffer) {
+//       var endCalled = false;
+//       var closeCalled = false;
+
+//       streamBuffer.on('end', function() {
+//         endCalled = true;
+//       });
+
+//       streamBuffer.on('close', function() {
+//         closeCalled = true;
+//       });
+
+//       streamBuffer.destroySoon();
+//       assert.isTrue(endCalled);
+//       assert.isTrue(closeCalled);
+//     },
+//     teardown: function(streamBuffer) {
+//       streamBuffer.destroy();
+//     }
+//   }
+// }).addBatch({
+//   'Readable event':{
+//     topic:function(){
+//       var that = this;
+
+//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
+
+//       aStreamBuffer.on('readable', function(){
+//         var data = aStreamBuffer.read();
+//         that.callback(null,data);
+//       });
+
+//       aStreamBuffer.setEncoding('utf8');
+//       aStreamBuffer.put(fixtures.unicodeString);  
+//       aStreamBuffer.destroySoon();
+//     },
+
+//     'Pumping out data through *aStreamBuffer.read()*':function(data){
+//       assert.equal(data,fixtures.unicodeString);
+//     }
+//   } 
+// }).export(module);
+});

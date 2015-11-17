@@ -14,9 +14,10 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "chai": "^3.4.1",
     "eslint": "^1.9.0",
-    "istanbul": "~0.3.2",
-    "vows": ">= 0.5.6"
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.4"
   },
   "license": "Unlicense",
   "repository": {
@@ -24,7 +25,7 @@
     "url": "https://github.com/samcday/node-stream-buffer.git"
   },
   "scripts": {
-    "test": "istanbul test vows -- --spec",
+    "test": "istanbul test _mocha",
     "lint": "eslint ."
   }
 }

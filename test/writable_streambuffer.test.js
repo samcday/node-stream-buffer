@@ -1,162 +1,129 @@
 'use strict';
 
-var vows = require('vows');
-var assert = require('assert');
-var streamBuffer = require('../lib/streambuffer.js');
+var expect = require('chai').expect;
 var fixtures = require('./fixtures');
-var helpers = require('./helpers');
+var streamBuffer = require('../lib/streambuffer.js');
 
-vows.describe('WritableStreamBuffer').addBatch({
-  'A simple WritableStreamBuffer': {
-    topic: function() {
-      return new streamBuffer.WritableStreamBuffer();
-    },
+describe('WritableStreamBuffer with defaults', function() {
+  beforeEach(function() {
+    this.buffer = new streamBuffer.WritableStreamBuffer();
+  });
 
-    'calling *getContents()* false when empty': function(aStreamBuffer) {
-      assert.isFalse(aStreamBuffer.getContents());
-    },
+  it('returns false on call to getContents() when empty', function() {
+    expect(this.buffer.getContents()).to.be.false;
+  });
 
-    'calling *getContentsAsString()* returns false when empty': function(aStreamBuffer) {
-      assert.isFalse(aStreamBuffer.getContentsAsString());
-    },
+  it('returns false on call to getContentsAsString() when empty', function() {
+    expect(this.buffer.getContentsAsString()).to.be.false;
+  });
 
-    'backing buffer should be default size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE);
-    }
-  },
+  it('backing buffer should be default size', function() {
+    expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE);
+  });
 
-  'Writing a simple string': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-      aStreamBuffer.write(fixtures.simpleString);
-      return aStreamBuffer;
-    },
+  describe('when writing a simple string', function() {
+    beforeEach(function() {
+      this.buffer.write(fixtures.simpleString);
+    });
 
-    'backing buffer should be correct length': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.size(), fixtures.simpleString.length);
-    },
+    it('should have a backing buffer of correct length', function() {
+      expect(this.buffer.size()).to.equal(fixtures.simpleString.length);
+    });
 
-    'max size should be default size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE);
-    },
+    it('should have a default max size', function() {
+      expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE);
+    });
 
-    'contents should be correct': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString);
-    }
-  },
+    it('contents should be correct', function() {
+      expect(this.buffer.getContentsAsString()).to.equal(fixtures.simpleString);
+    });
+  });
 
-  'When writing a large binary blob': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-      aStreamBuffer.write(fixtures.largeBinaryData);
-      return aStreamBuffer;
-    },
+  describe('when writing a large binary blob', function() {
+    beforeEach(function() {
+      this.buffer.write(fixtures.largeBinaryData);
+    });
 
-    'backing buffer should be correct size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.size(), fixtures.largeBinaryData.length);
-    },
+    it('should have a backing buffer of correct length', function() {
+      expect(this.buffer.size()).to.equal(fixtures.largeBinaryData.length);
+    });
 
-    'backing buffer size should have incremented': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), streamBuffer.DEFAULT_INITIAL_SIZE + streamBuffer.DEFAULT_INCREMENT_AMOUNT);
-    },
+    it('should have a larger backing buffer max size', function() {
+      expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE + streamBuffer.DEFAULT_INCREMENT_AMOUNT);
+    });
 
-    'contents are valid': function(aStreamBuffer) {
-      helpers.assertBuffersEqual(aStreamBuffer.getContents(), fixtures.largeBinaryData);
-    }
-  },
+    it('contents are valid', function() {
+      expect(this.buffer.getContents()).to.deep.equal(fixtures.largeBinaryData);
+    });
+  });
 
-  'When writing some simple data to the stream': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-      aStreamBuffer.write(fixtures.simpleString);
-      return aStreamBuffer;
-    },
+  describe('when writing some simple data to the stream', function() {
+    beforeEach(function() {
+      this.buffer = new streamBuffer.WritableStreamBuffer();
+      this.buffer.write(fixtures.simpleString);
+    });
 
-    'and retrieving half of it': {
-      topic: function(aStreamBuffer) {
-        var str = aStreamBuffer.getContentsAsString('utf8', Math.floor(fixtures.simpleString.length / 2));
-        aStreamBuffer.testStr = str;
-        return aStreamBuffer;
-      },
-
-      // No clue why, but first param is a null value...
-      'we get correct data': function(wtf, aStreamBuffer) {
-        assert.equal(aStreamBuffer.testStr, fixtures.simpleString.substring(0, Math.floor(fixtures.simpleString.length / 2)));
-      },
-
-      // Same deal again. Nested contexes are weird yo.
-      'and there is still correct amount of data remaining in stream buffer': function(wtf, aStreamBuffer) {
-        assert.equal(aStreamBuffer.size(), Math.ceil(fixtures.simpleString.length / 2));
-      },
-
-      // Not very well documented (IMO), but sub contexts *can* execute asynchronously. So I put this context here to make sure it executes after
-      // the first half of data is read.
-      'and then retrieving the other half of it': {
-        topic: function(aStreamBuffer) {
-          var str = aStreamBuffer.getContentsAsString('utf8', Math.ceil(fixtures.simpleString.length / 2));
-          aStreamBuffer.testStr = str;
-          return aStreamBuffer;
-        },
-
-        'we get correct data': function(wtf, aStreamBuffer) {
-          assert.equal(aStreamBuffer.testStr, fixtures.simpleString.substring(Math.floor(fixtures.simpleString.length / 2)));
-        },
-
-        'and stream buffer is now empty': function(wtf, aStreamBuffer) {
-          assert.equal(aStreamBuffer.size(), 0);
-        }
-      }
-    }
-  },
-
-  'StreamBuffer with a different initial size and increment amount': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer({
-        initialSize: 62,
-        incrementAmount: 321
+    describe('and retrieving half of it', function() {
+      beforeEach(function() {
+        this.firstStr = this.buffer.getContentsAsString('utf8', Math.floor(fixtures.simpleString.length / 2));
       });
-      return aStreamBuffer;
-    },
 
-    'has the correct initial size': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.maxSize(), 62);
-    },
+      it('returns correct data', function() {
+        expect(this.firstStr).to.equal(fixtures.simpleString.substring(0, Math.floor(fixtures.simpleString.length / 2)));
+      });
 
-    'after data is written': {
-      topic: function(aStreamBuffer) {
-        aStreamBuffer.write(fixtures.binaryData);
-        return aStreamBuffer;
-      },
+      it('leaves correct amount of data remaining in buffer', function() {
+        expect(this.buffer.size()).to.equal(Math.ceil(fixtures.simpleString.length / 2));
+      });
 
-      'has correct initial size + custom increment amount': function(aStreamBuffer) {
-        assert.equal(aStreamBuffer.maxSize(), 321 + 62);
-      }
-    }
-  },
+      describe('and then retrieving the other half of it', function() {
+        beforeEach(function() {
+          this.secondStr = this.buffer.getContentsAsString('utf8', Math.ceil(fixtures.simpleString.length / 2));
+        });
 
-  'When stream is written in two chunks': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-      aStreamBuffer.write(fixtures.simpleString);
-      aStreamBuffer.write(fixtures.simpleString);
-      return aStreamBuffer;
-    },
+        it('returns correct data', function() {
+          expect(this.secondStr).to.equal(fixtures.simpleString.substring(Math.floor(fixtures.simpleString.length / 2)));
+        });
 
-    'buffer contents are correct': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString + fixtures.simpleString);
-    }
-  },
+        it('results in an empty buffer', function() {
+          expect(this.buffer.size()).to.equal(0);
+        });
+      });
+    });
+  });
+});
 
-  'When stream is *end()*\'ed with final buffer': {
-    topic: function() {
-      var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-      aStreamBuffer.write(fixtures.simpleString);
-      aStreamBuffer.end(fixtures.simpleString);
-      return aStreamBuffer;
-    },
+describe('WritableStreamBuffer with a different initial size and increment amount', function() {
+  beforeEach(function() {
+    this.buffer = new streamBuffer.WritableStreamBuffer({
+      initialSize: 62,
+      incrementAmount: 321
+    });
+  });
 
-    'buffer contents are correct': function(aStreamBuffer) {
-      assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString + fixtures.simpleString);
-    }
-  }
-}).export(module);
+  it('has the correct initial size', function() {
+    expect(this.buffer.maxSize()).to.equal(62);
+  });
+
+  describe('after data is written', function() {
+    beforeEach(function() {
+      this.buffer.write(fixtures.binaryData);
+    });
+
+    it('has correct initial size + custom increment amount', function() {
+      expect(this.buffer.maxSize()).to.equal(321 + 62);
+    });
+  });
+});
+
+describe('When WritableStreamBuffer is written in two chunks', function() {
+  beforeEach(function() {
+    this.buffer = new streamBuffer.WritableStreamBuffer();
+    this.buffer.write(fixtures.simpleString);
+    this.buffer.write(fixtures.simpleString);
+  });
+
+  it('buffer contents are correct', function() {
+    expect(this.buffer.getContentsAsString()).to.equal(fixtures.simpleString + fixtures.simpleString);
+  });
+});
