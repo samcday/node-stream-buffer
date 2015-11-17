@@ -1,13 +1,24 @@
 language: node_js
-
+sudo: false
+cache:
+  directories:
+  - node_modules
 matrix:
   include:
-    - node_js: '0.10'
-      env: NO_COVERAGE=1
-    - node_js: '0.11'
-      env: NO_COVERAGE=1
-    - node_js: '0.12'
-
+  - node_js: '0.10'
+  - node_js: '0.12'
+  - node_js: '4.2'
+  - node_js: '5.0'
+    env: npm_config_coverage=1
+addons:
+  code_climate:
+    repo_token:
+      secure: "qoQoeJZrjiE7RmcGIZNmR2tO3/oP1NqlxhYkj1TYbMVOYmK4zsOdeVjhllkETZaGejKcw1uXEQx7caSmpZQ6lw5V5JXmyyTzo8xfAbanP9Wf4WXw5uSOaBDYR/DR2B9VfkHT7spPVwdoX09sgb+oTIy4IgBUivucm6IGmiw7PuY="
+after_success: |
+  if [ -n "$npm_config_coverage" ]; then
+    npm install -g codeclimate-test-reporter
+    codeclimate-test-reporter < coverage/lcov.info
+  fi
 deploy:
   provider: npm
   email: me@samcday.com.au
@@ -16,13 +27,4 @@ deploy:
   on:
     tags: true
     all_branches: true
-    node_js: 0.12
-
-addons:
-  code_climate:
-    repo_token:
-      secure: "qoQoeJZrjiE7RmcGIZNmR2tO3/oP1NqlxhYkj1TYbMVOYmK4zsOdeVjhllkETZaGejKcw1uXEQx7caSmpZQ6lw5V5JXmyyTzo8xfAbanP9Wf4WXw5uSOaBDYR/DR2B9VfkHT7spPVwdoX09sgb+oTIy4IgBUivucm6IGmiw7PuY="
-
-after_script:
-  - npm install -g codeclimate-test-reporter
-  - cat coverage/lcov.info | codeclimate
+    node_js: 5.0
