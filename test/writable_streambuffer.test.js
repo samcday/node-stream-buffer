@@ -10,14 +10,6 @@ vows.describe("WritableStreamBuffer").addBatch({
 			return new streamBuffer.WritableStreamBuffer();
 		},
 
-		"is writable": function(aStreamBuffer) {
-			assert.isTrue(aStreamBuffer.writable);
-		},
-
-		"is not readable": function(aStreamBuffer) {
-			assert.isFalse(aStreamBuffer.readable);
-		},
-
 		"calling *getContents()* false when empty": function(aStreamBuffer) {
 			assert.isFalse(aStreamBuffer.getContents());
 		},
@@ -163,67 +155,6 @@ vows.describe("WritableStreamBuffer").addBatch({
 
 		"buffer contents are correct": function(aStreamBuffer) {
 			assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString + fixtures.simpleString);
-		},
-
-		"writable should be false": function(aStreamBuffer) {
-			assert.isFalse(aStreamBuffer.writable);
-		}
-	},
-
-	"When stream is destroyed": {
-		topic: function() {
-			var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-			aStreamBuffer.write(fixtures.simpleString);
-			aStreamBuffer.destroy(fixtures.simpleString);
-			return aStreamBuffer;
-		},
-
-		"buffer contents are correct": function(aStreamBuffer) {
-			assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString);
-		},
-
-		"stream is no longer writable": function(aStreamBuffer) {
-			assert.isFalse(aStreamBuffer.writable);
-		}
-	},
-
-	"destroySoon() on stream": {
-		topic: function() {
-			var that = this;
-
-			var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-
-			aStreamBuffer.on("close", function() {
-				that.callback(null, aStreamBuffer);
-			});
-
-			aStreamBuffer.write(fixtures.simpleString);
-			aStreamBuffer.destroySoon();
-		},
-
-		"sets *writable* to false": function(aStreamBuffer) {
-			assert.isFalse(aStreamBuffer.writable);
-		},
-
-		"correct data is in buffer": function(aStreamBuffer) {
-			assert.equal(aStreamBuffer.getContentsAsString(), fixtures.simpleString);
-		}
-	},
-
-	"Writing data after destroySoon()": {
-		topic: function() {
-			var aStreamBuffer = new streamBuffer.WritableStreamBuffer();
-			aStreamBuffer.destroySoon();
-			aStreamBuffer.write(fixtures.basicString);
-
-			// Check size of buffer now, as vows may go do other stuff.
-			aStreamBuffer._bufferSize = aStreamBuffer.size();
-
-			return aStreamBuffer;
-		},
-
-		"should be silently ignored": function(aStreamBuffer) {
-			assert.equal(aStreamBuffer._bufferSize, 0);
 		}
 	}
 }).export(module);

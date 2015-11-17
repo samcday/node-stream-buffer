@@ -23,6 +23,6 @@
     "url": "https://github.com/samcday/node-stream-buffer.git"
   },
   "scripts": {
-    "test": "[ -n \"$NO_COVERAGE\" ] && vows --spec || istanbul cover vows -- --spec"
+    "test": "istanbul test vows -- --spec"
   }
 }
