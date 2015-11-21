@@ -37,6 +37,14 @@ describe('WritableStreamBuffer with defaults', function() {
     it('contents should be correct', function() {
       expect(this.buffer.getContentsAsString()).to.equal(fixtures.simpleString);
     });
+
+    it('returns partial contents correctly', function() {
+      var buf = Buffer.concat([
+        this.buffer.getContents(Math.floor(Buffer.byteLength(fixtures.simpleString) / 2)),
+        this.buffer.getContents()
+      ]);
+      expect(buf.toString()).to.equal(fixtures.simpleString);
+    });
   });
 
   describe('when writing a large binary blob', function() {

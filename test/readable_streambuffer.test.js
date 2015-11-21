@@ -21,6 +21,40 @@ describe('A default ReadableStreamBuffer', function() {
     expect(this.buffer.maxSize()).to.equal(streamBuffer.DEFAULT_INITIAL_SIZE);
   });
 
+  describe('when stopped', function() {
+    beforeEach(function() {
+      this.buffer.stop();
+    });
+
+    it('throws error on calling stop() again', function() {
+      expect(this.buffer.stop.bind(this.buffer)).to.throw(Error);
+    });
+
+    it('throws error on calls to put()', function() {
+      expect(this.buffer.put.bind(this.buffer)).to.throw(Error);
+    });
+  });
+
+  it('emits end event when stopped', function(done) {
+    this.buffer.on('end', done);
+    this.buffer.stop();
+    this.buffer.read();
+  });
+
+  it('emits end event after data, when stopped', function(done) {
+    var that = this;
+    var str = '';
+    this.buffer.on('readable', function() {
+      str += (that.buffer.read() || new Buffer(0)).toString('utf8');
+    });
+    this.buffer.on('end', function() {
+      expect(str).to.equal(fixtures.unicodeString);
+      done();
+    });
+    this.buffer.put(fixtures.unicodeString);
+    this.buffer.stop();
+  });
+
   describe('when writing binary data', function() {
     beforeEach(function(done) {
       var that = this;
@@ -98,205 +132,4 @@ describe('A ReadableStreamBuffer using custom frequency', function() {
     // faster. So we do a 'close-enough' assertion here ;)
     expect(this.time).to.be.at.least(295);
   });
-
-//   'Setting a custom initial size and increment amount': {
-//     topic: function() {
-//       return new streamBuffer.ReadableStreamBuffer({
-//         initialSize: 1,
-//         incrementAmount: 5
-//       });
-//     },
-
-//     'gives us correct initial backing buffer size': function(aStreamBuffer) {
-//       assert.equal(aStreamBuffer.maxSize(), 1);
-//     },
-
-//     'and writing to size of initial size': {
-//       topic: function(aStreamBuffer) {
-//         aStreamBuffer.put('ab');
-//         return aStreamBuffer;
-//       },
-
-//       'gives us correct incremented size of backing buffer': function(aStreamBuffer) {
-//         assert.equal(aStreamBuffer.maxSize(), 6);
-//       }
-//     },
-
-//     teardown: function(aStreamBuffer) {
-//       aStreamBuffer.destroy();
-//     }
-//   },
-
-//   'Destroying stream': {
-//     topic: function() {
-//       var that = this;
-
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-
-//       aStreamBuffer.on('data', function() {
-//         aStreamBuffer.dataCalled = true;
-//       });
-
-//       aStreamBuffer.on('end', function() {
-//         aStreamBuffer.endCalled = true;
-//       });
-
-//       aStreamBuffer.on('close', function() {
-//         that.callback(null, aStreamBuffer);
-//       });
-
-//       aStreamBuffer.put('asdf');
-//       aStreamBuffer.destroy();
-//     },
-
-//     'sets *readable* to false': function(aStreamBuffer) {
-//       assert.isFalse(aStreamBuffer.readable);
-//     },
-
-//     '*data* event was never called': function(aStreamBuffer) {
-//       assert.isFalse(aStreamBuffer.dataCalled || false);
-//     },
-
-//     '*end* event was called': function(aStreamBuffer) {
-//       assert.isTrue(aStreamBuffer.endCalled);
-//     }
-//   },
-
-//   'Data written in two chunks': {
-//     topic: function() {
-//       var that = this;
-
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-//         chunkSize: Math.ceil(fixtures.simpleString.length / 2)
-//       });
-//       aStreamBuffer.setEncoding('utf8');
-
-//       var chunks = [];
-//       aStreamBuffer.on('data', function(data) {
-//         chunks.push(data);
-//         if(chunks.length == 2) that.callback(null, chunks);
-//       });
-
-//       aStreamBuffer.put(fixtures.simpleString);
-//       aStreamBuffer.destroySoon();
-//     },
-
-//     'chunks equal original value': function(chunks) {
-//       assert.equal(chunks[0] + chunks[1], fixtures.simpleString);
-//     }
-//   },
-
-//   'Writing unicode data in two writes': {
-//     topic: function() {
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-//       aStreamBuffer.pause();
-//       aStreamBuffer.put(fixtures.unicodeString);
-//       aStreamBuffer.put(fixtures.unicodeString);
-//       aStreamBuffer.resume();
-//       aStreamBuffer.setEncoding('utf8');
-//       aStreamBuffer.on('data', this.callback.bind(this, null));
-//       aStreamBuffer.destroySoon();
-//     },
-
-//     'chunks equal original value': function(data) {
-//       assert.equal(data, fixtures.unicodeString + fixtures.unicodeString);
-//     }
-//   },
-
-//   'Incoming data larger than chunk size (Issue #5)': {
-//     topic: function() {
-//       var that = this;
-
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-//         chunkSize: 5,
-//         initialSize: 10
-//       });
-//       aStreamBuffer.pause();
-//       aStreamBuffer.put('HelloWorld');
-//       var chunks = [];
-//       aStreamBuffer.setEncoding('utf8');
-//       aStreamBuffer.resume();
-//       aStreamBuffer.on('data', function(data) {
-//         chunks.push(data);
-//         if(chunks.length == 2) that.callback(null, chunks);
-//       });
-//       aStreamBuffer.destroySoon();
-//     },
-//     'is chunked correctly': function(data) {
-//       assert.equal(data[0], 'Hello');
-//       assert.equal(data[1], 'World');
-//     }
-//   },
-
-//   'Frequency 0': {
-//     topic: function() {
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer({
-//         chunkSize: 1,
-//         frequency: 0
-//       });
-//       aStreamBuffer.setEncoding('utf8');
-//       return aStreamBuffer;
-//     },
-//     'emits data immediately': function(streamBuffer) {
-//       var dataCalled = false;
-//       streamBuffer.once('data', function() {
-//         dataCalled = true;
-//       });
-
-//       streamBuffer.put('a');
-//       assert.isTrue(dataCalled);
-//     },
-//     'emits multiple chunks immediately': function(streamBuffer) {
-//       var chunks = [];
-//       var dataHandler = function(chunk) {
-//         chunks.push(chunk);
-//       };
-//       streamBuffer.on('data', dataHandler);
-
-//       streamBuffer.put('ab');
-//       streamBuffer.removeListener('data', dataHandler);
-//       assert.deepEqual(chunks, ['a', 'b']);
-//     },
-//     'emits end event immediately on destroySoon': function(streamBuffer) {
-//       var endCalled = false;
-//       var closeCalled = false;
-
-//       streamBuffer.on('end', function() {
-//         endCalled = true;
-//       });
-
-//       streamBuffer.on('close', function() {
-//         closeCalled = true;
-//       });
-
-//       streamBuffer.destroySoon();
-//       assert.isTrue(endCalled);
-//       assert.isTrue(closeCalled);
-//     },
-//     teardown: function(streamBuffer) {
-//       streamBuffer.destroy();
-//     }
-//   }
-// }).addBatch({
-//   'Readable event':{
-//     topic:function(){
-//       var that = this;
-
-//       var aStreamBuffer = new streamBuffer.ReadableStreamBuffer();
-
-//       aStreamBuffer.on('readable', function(){
-//         var data = aStreamBuffer.read();
-//         that.callback(null,data);
-//       });
-
-//       aStreamBuffer.setEncoding('utf8');
-//       aStreamBuffer.put(fixtures.unicodeString);  
-//       aStreamBuffer.destroySoon();
-//     },
-
-//     'Pumping out data through *aStreamBuffer.read()*':function(data){
-//       assert.equal(data,fixtures.unicodeString);
-//     }
-//   } 
-// }).export(module);
 });
