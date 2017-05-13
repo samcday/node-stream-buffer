@@ -127,7 +127,7 @@ myReadableStreamBuffer.on('readable', function(data) {
 });
 ```
 
-Because `ReadableStreamBuffer` is simply an implementation of [`stream.Readble`](https://nodejs.org/api/stream.html#stream_class_stream_readable), it implements pause / resume / setEncoding / etc.
+Because `ReadableStreamBuffer` is simply an implementation of [`stream.Readable`](https://nodejs.org/api/stream.html#stream_class_stream_readable), it implements pause / resume / setEncoding / etc.
 
 Once you're done putting data into a `ReadableStreamBuffer`, you can call `stop()` on it.
 
