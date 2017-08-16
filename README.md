@@ -138,6 +138,17 @@ myReadableStreamBuffer.stop();
 
 Once the `ReadableStreamBuffer` is done pumping out the data in its internal buffer, it will emit the usual [`end`](https://nodejs.org/api/stream.html#stream_event_end) event. You cannot write any more data to the stream once you've called `stop()` on it.
 
+It is possible to simulate 'error' Event:
+
+```js
+myReadableStreamBuffer.on('error', function(err) {
+  ...
+});
+myReadableStreamBuffer.put('Send some data', 'utf-8')
+myReadableStreamBuffer.error();  // interrupt with simulating invalid chunk
+```
+You cannot write any more data to the stream once you've called error() on it.
+
 ## Disclaimer
 
 Not supposed to be a speed demon, it's more for tests/debugging or weird edge cases. It works with an internal buffer that it copies contents to/from/around.

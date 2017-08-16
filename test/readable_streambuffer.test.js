@@ -35,6 +35,28 @@ describe('A default ReadableStreamBuffer', function() {
     });
   });
 
+  describe('when error', function() {
+    beforeEach(function() {
+      this.buffer.error();
+    });
+
+    it('throws error on calling error() again', function() {
+      expect(this.buffer.error.bind(this.buffer)).to.throw(Error);
+    });
+
+    it('throws error on calls to put()', function() {
+      expect(this.buffer.put.bind(this.buffer)).to.throw(Error);
+    });
+
+    it('emits error event', function(done) {
+      this.buffer.on('error', function(err) {
+        done();
+      });
+      this.buffer.read();
+    });
+
+  });
+
   it('emits end event when stopped', function(done) {
     this.buffer.on('end', done);
     this.buffer.stop();
