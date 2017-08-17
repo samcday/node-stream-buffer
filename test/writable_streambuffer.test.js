@@ -124,6 +124,32 @@ describe('WritableStreamBuffer with a different initial size and increment amoun
   });
 });
 
+describe('WritableStreamBuffer with a different limit', function() {
+  beforeEach(function() {
+    this.limit = fixtures.simpleString.length - 1
+    this.buffer = new streamBuffer.WritableStreamBuffer({
+      limit: this.limit
+    });
+  });
+
+  it('should throw an Error after the limit number of bytes were written', function() {
+    expect(this.buffer.write.bind(this.buffer, fixtures.simpleString)).to.throw(Error);
+    expect(this.buffer.size()).to.equal(this.limit);
+  });
+
+  it('should throw an Error after the limit number of bytes were written in 2 chunks', function() {
+    this.buffer.write(fixtures.simpleStringParts[0]);
+    expect(this.buffer.write.bind(this.buffer, fixtures.simpleStringParts[1])).to.throw(Error);
+    expect(this.buffer.size()).to.equal(this.limit);
+  });
+});
+
+function e(val) {
+  if (val) {
+    throw new Error('xxx');
+  }
+}
+
 describe('When WritableStreamBuffer is written in two chunks', function() {
   beforeEach(function() {
     this.buffer = new streamBuffer.WritableStreamBuffer();
