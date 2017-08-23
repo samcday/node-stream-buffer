@@ -1,7 +1,8 @@
+Note: this repository was forked from the original, since the original seemed to be unreachable for pull requests.
+
 # Node Stream Buffers
 
 [![Build Status][badge-travis-img]][badge-travis-url]
-[![Dependency Information][badge-david-img]][badge-david-url]
 [![Code Climate][badge-climate-img]][badge-climate-url]
 [![Code Coverage][badge-coverage-img]][badge-coverage-url]
 [![npm][badge-npm-img]][badge-npm-url]
@@ -9,7 +10,7 @@
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
 
 ```
-npm install stream-buffers --save
+npm install streamable-buffers --save
 ```
 
 ## Usage
@@ -153,30 +154,18 @@ myReadableStreamBuffer.error();  // interrupt with simulating invalid chunk
 ```
 You cannot write any more data to the stream once you've called error() on it.
 
-## Disclaimer
-
-Not supposed to be a speed demon, it's more for tests/debugging or weird edge cases. It works with an internal buffer that it copies contents to/from/around.
-
-## Contributors
-
-Thanks to the following people for taking some time to contribute to this project.
-
- * Igor Dralyuk <idralyuk@ebay.com>
- * Simon Koudijs <simon.koudijs@intellifi.nl>
 
 ## License
 
 node-stream-buffer is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
 
-[badge-travis-img]: http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square
-[badge-travis-url]: https://travis-ci.org/samcday/node-stream-buffer
-[badge-david-img]: https://img.shields.io/david/samcday/node-stream-buffer.svg?style=flat-square
-[badge-david-url]: https://david-dm.org/samcday/node-stream-buffer
-[badge-climate-img]: http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square
-[badge-climate-url]: https://codeclimate.com/github/samcday/node-stream-buffer
-[badge-coverage-img]: http://img.shields.io/codeclimate/coverage/github/samcday/node-stream-buffer.svg?style=flat-square
-[badge-coverage-url]: https://codeclimate.com/github/samcday/node-stream-buffer
-[badge-npm-img]: https://img.shields.io/npm/dm/stream-buffers.svg?style=flat-square
-[badge-npm-url]: https://www.npmjs.org/package/stream-buffers
+[badge-travis-img]: https://img.shields.io/travis/genrym/streamable-buffers.svg?style=flat-square
+[badge-travis-url]: https://travis-ci.org/genrym/streamable-buffers
+[badge-climate-img]: https://img.shields.io/codeclimate/github/genrym/streamable-buffers.svg?style=flat-square
+[badge-climate-url]: https://codeclimate.com/github/genrym/streamable-buffers
+[badge-coverage-img]: https://img.shields.io/codeclimate/coverage/github/genrym/streamable-buffers.svg?style=flat-square
+[badge-coverage-url]: https://codeclimate.com/github/genrym/streamable-buffers
+[badge-npm-img]: https://img.shields.io/npm/dm/streamable-buffers.svg?style=flat-square
+[badge-npm-url]: https://www.npmjs.org/package/streamable-buffers
 
 [node-buffer-docs]: http://nodejs.org/api/buffer.html

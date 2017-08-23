@@ -1,30 +1,29 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=312e89cf7930ba8eb84cab19c637efb303e727f450839074e9861047ab935957
+    - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+  matrix:
+    - NODE_VERSION=0.12
+    - NODE_VERSION=4.2
+    - NODE_VERSION=5.0
+    - NODE_VERSION=6.5
+    - NODE_VERSION=6.10
 language: node_js
 sudo: false
 cache:
   directories:
   - node_modules
-matrix:
-  include:
-  - node_js: '0.10'
-  - node_js: '0.12'
-  - node_js: '4.2'
-  - node_js: '5.0'
-    env: npm_config_coverage=1
-addons:
-  code_climate:
-    repo_token:
-      secure: "qoQoeJZrjiE7RmcGIZNmR2tO3/oP1NqlxhYkj1TYbMVOYmK4zsOdeVjhllkETZaGejKcw1uXEQx7caSmpZQ6lw5V5JXmyyTzo8xfAbanP9Wf4WXw5uSOaBDYR/DR2B9VfkHT7spPVwdoX09sgb+oTIy4IgBUivucm6IGmiw7PuY="
-after_success: |
-  if [ -n "$npm_config_coverage" ]; then
-    npm install -g codeclimate-test-reporter
-    codeclimate-test-reporter < coverage/lcov.info
-  fi
-deploy:
-  provider: npm
-  email: me@samcday.com.au
-  api_key:
-    secure: GiLpIWPU/TFJ5JVSHbu1eLN3Bx/mpuVtSh0FIwXP0mlBNzKq/y2pTrdzAx+Lp9s8lTvJl8kBE2hdaQMMpHHK7OoAaqykU2DCKPMSD2/mBxjzq3XjP/f3t7/sIpMv8ZZ/kUFmzyHcZv+zAIlFx39IQl5C9o1L2LYkG3EDaiiMzi8=
-  on:
-    tags: true
-    all_branches: true
-    node_js: 5.0
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+
+node_js: "$NODE_VERSION"
+
+after_success:
+  # Preferably you will run test-reporter on branch update events. But
+  # if you setup travis to build PR updates only, you don't need to run
+  # the line below
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$NODE_VERSION" == 6.10 ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  # In the case where travis is setup to build PR updates only,
+  # uncomment the line below
+  # - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
