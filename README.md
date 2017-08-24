@@ -18,7 +18,7 @@ npm install streamable-buffers --save
 To use the stream buffers in your module, simply import it and away you go.
 
 ```js
-var streamBuffers = require('stream-buffers');
+var streamBuffers = require('streamable-buffers');
 ```
 
 ### WritableStreamBuffer
