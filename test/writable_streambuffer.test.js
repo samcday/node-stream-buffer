@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var fixtures = require('./fixtures');
 var streamBuffer = require('../lib/streambuffer.js');
+var stringStream = require('string-to-stream');
 
 describe('WritableStreamBuffer with defaults', function() {
   beforeEach(function() {
@@ -10,11 +11,11 @@ describe('WritableStreamBuffer with defaults', function() {
   });
 
   it('returns false on call to getContents() when empty', function() {
-    expect(this.buffer.getContents()).to.be.false;
+    return expect(this.buffer.getContents()).to.be.false;
   });
 
   it('returns false on call to getContentsAsString() when empty', function() {
-    expect(this.buffer.getContentsAsString()).to.be.false;
+    return expect(this.buffer.getContentsAsString()).to.be.false;
   });
 
   it('backing buffer should be default size', function() {
@@ -126,7 +127,7 @@ describe('WritableStreamBuffer with a different initial size and increment amoun
 
 describe('WritableStreamBuffer with a different limit', function() {
   beforeEach(function() {
-    this.limit = fixtures.simpleString.length - 1
+    this.limit = fixtures.simpleString.length - 1;
     this.buffer = new streamBuffer.WritableStreamBuffer({
       limit: this.limit
     });
@@ -144,30 +145,18 @@ describe('WritableStreamBuffer with a different limit', function() {
   });
 
   it('should emit error event when the limit is surpassed', function(done) {
-    this.buffer.on('error', function(err) {
+    this.buffer.on('error', function() {
       done();
     });
 
     var overflowingReadableStream = givenOverflowingReadableStream();
-    overflowingReadableStream.on('error', function(err) {
-      done();
-    });
     overflowingReadableStream.pipe(this.buffer);
   });
 
   function givenOverflowingReadableStream() {
-    var readableStream = new streamBuffer.ReadableStreamBuffer();
-    readableStream.put(fixtures.simpleString);
-    readableStream.stop();
-    return readableStream;
+    return stringStream(fixtures.simpleString);
   }
 });
-
-function e(val) {
-  if (val) {
-    throw new Error('xxx');
-  }
-}
 
 describe('When WritableStreamBuffer is written in two chunks', function() {
   beforeEach(function() {

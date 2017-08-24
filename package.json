@@ -20,7 +20,8 @@
     "chai": "~4.1.1",
     "eslint": "~3.18.0",
     "mocha": "~3.5.0",
-    "istanbul": "1.1.0-alpha.1"
+    "istanbul": "1.1.0-alpha.1",
+    "string-to-stream": "~1.1.0"
   },
   "license": "Unlicense",
   "repository": {
