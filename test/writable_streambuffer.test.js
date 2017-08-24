@@ -142,6 +142,25 @@ describe('WritableStreamBuffer with a different limit', function() {
     expect(this.buffer.write.bind(this.buffer, fixtures.simpleStringParts[1])).to.throw(Error);
     expect(this.buffer.size()).to.equal(this.limit);
   });
+
+  it('should emit error event when the limit is surpassed', function(done) {
+    this.buffer.on('error', function(err) {
+      done();
+    });
+
+    var overflowingReadableStream = givenOverflowingReadableStream();
+    overflowingReadableStream.on('error', function(err) {
+      done();
+    });
+    overflowingReadableStream.pipe(this.buffer);
+  });
+
+  function givenOverflowingReadableStream() {
+    var readableStream = new streamBuffer.ReadableStreamBuffer();
+    readableStream.put(fixtures.simpleString);
+    readableStream.stop();
+    return readableStream;
+  }
 });
 
 function e(val) {

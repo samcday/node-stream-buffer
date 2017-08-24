@@ -1,6 +1,10 @@
 This file contains the changes by version since the fork
 ========================================================
-version 3.1.0
+v3.1.2
+    - WritableStreamBuffer - fixed 'error' event is not emitted when the buffer was overflown with more than limit
+      size
+
+v3.1.0
     - ReadableStreamBuffer.error() added - will simulate an error in stream
     - WritableStreamBuffer now supports 'limit' option upon creation - will throw an error if more than 'limit'
       bytes were written
