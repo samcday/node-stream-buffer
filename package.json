@@ -1,6 +1,6 @@
 {
   "name": "streamable-buffers",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Buffer-backed Streams for reading and writing.",
   "keywords": [
     "memory streams",
