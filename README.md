@@ -25,7 +25,7 @@ var streamBuffers = require('streamable-buffers');
 
 `WritableStreamBuffer` implements the standard [`stream.Writable`](https://nodejs.org/api/stream.html#stream_class_stream_writable) interface. All writes to this stream will accumulate in an internal [`Buffer`](https://nodejs.org/api/buffer.html). If the internal buffer overflows it will be resized automatically. The initial size of the Buffer and the amount in which it grows can be configured in the constructor.
 
-There is also a possibility to limit the maximum amount of bytes to be written to the buffer, by specifying the _limit_ option. If the limit is reached - an _Error_ will be thrown
+There is also a possibility to limit the maximum amount of bytes to be written to the buffer, by specifying the _limit_ option. If the limit is reached - an _Error_ will be thrown, and 'error' event will be emitted.
 
 ```js
 var myWritableStreamBuffer = new streamBuffers.WritableStreamBuffer({
