@@ -1,5 +1,8 @@
 This file contains the changes by version since the fork
 ========================================================
+v3.1.3
+    - Added options parameter type validation
+
 v3.1.2
     - WritableStreamBuffer - fixed 'error' event is not emitted when the buffer was overflown with more than limit
       size
