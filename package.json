@@ -26,7 +26,7 @@
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "https://github.com/genrym/node-stream-buffer.git"
+    "url": "https://github.com/genrym/streamable-buffers.git"
   },
   "scripts": {
     "lint": "eslint test/ lib/",
