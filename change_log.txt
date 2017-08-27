@@ -3,6 +3,7 @@ This file contains the changes by version since the fork
 v3.1.2
     - WritableStreamBuffer - fixed 'error' event is not emitted when the buffer was overflown with more than limit
       size
+    - Lowest supported node version is now 4.2.0
 
 v3.1.0
     - ReadableStreamBuffer.error() added - will simulate an error in stream
