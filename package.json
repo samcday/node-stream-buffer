@@ -1,31 +1,35 @@
 {
-  "name": "stream-buffers",
-  "version": "3.0.1",
+  "name": "streamable-buffers",
+  "version": "3.1.2",
   "description": "Buffer-backed Streams for reading and writing.",
   "keywords": [
     "memory streams",
     "streams",
     "buffer streams"
   ],
-  "author": "Sam Day <me@samcday.com.au>",
+  "author": {
+    "name": "Genry Manashirov",
+    "email": "henrydev10@gmail.com"
+  },
   "main": "./lib/streambuffer.js",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 4.2.0"
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "^3.4.1",
-    "eslint": "^1.9.0",
-    "istanbul": "^0.4.0",
-    "mocha": "^2.3.4"
+    "chai": "~4.1.1",
+    "eslint": "~3.18.0",
+    "mocha": "~3.5.0",
+    "istanbul": "1.1.0-alpha.1",
+    "string-to-stream": "~1.1.0"
   },
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "https://github.com/samcday/node-stream-buffer.git"
+    "url": "https://github.com/genrym/streamable-buffers.git"
   },
   "scripts": {
-    "test": "istanbul test _mocha",
-    "lint": "eslint ."
+    "lint": "eslint test/ lib/",
+    "test": "istanbul cover _mocha test/**/*.test.js"
   }
 }

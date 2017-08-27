@@ -3,6 +3,7 @@
 var expect = require('chai').expect;
 var fixtures = require('./fixtures');
 var streamBuffer = require('../lib/streambuffer.js');
+var stringStream = require('string-to-stream');
 
 describe('WritableStreamBuffer with defaults', function() {
   beforeEach(function() {
@@ -10,11 +11,11 @@ describe('WritableStreamBuffer with defaults', function() {
   });
 
   it('returns false on call to getContents() when empty', function() {
-    expect(this.buffer.getContents()).to.be.false;
+    return expect(this.buffer.getContents()).to.be.false;
   });
 
   it('returns false on call to getContentsAsString() when empty', function() {
-    expect(this.buffer.getContentsAsString()).to.be.false;
+    return expect(this.buffer.getContentsAsString()).to.be.false;
   });
 
   it('backing buffer should be default size', function() {
@@ -122,6 +123,39 @@ describe('WritableStreamBuffer with a different initial size and increment amoun
       expect(this.buffer.maxSize()).to.equal(321 + 62);
     });
   });
+});
+
+describe('WritableStreamBuffer with a different limit', function() {
+  beforeEach(function() {
+    this.limit = fixtures.simpleString.length - 1;
+    this.buffer = new streamBuffer.WritableStreamBuffer({
+      limit: this.limit
+    });
+  });
+
+  it('should throw an Error after the limit number of bytes were written', function() {
+    expect(this.buffer.write.bind(this.buffer, fixtures.simpleString)).to.throw(Error);
+    expect(this.buffer.size()).to.equal(this.limit);
+  });
+
+  it('should throw an Error after the limit number of bytes were written in 2 chunks', function() {
+    this.buffer.write(fixtures.simpleStringParts[0]);
+    expect(this.buffer.write.bind(this.buffer, fixtures.simpleStringParts[1])).to.throw(Error);
+    expect(this.buffer.size()).to.equal(this.limit);
+  });
+
+  it('should emit error event when the limit is surpassed', function(done) {
+    this.buffer.on('error', function() {
+      done();
+    });
+
+    var overflowingReadableStream = givenOverflowingReadableStream();
+    overflowingReadableStream.pipe(this.buffer);
+  });
+
+  function givenOverflowingReadableStream() {
+    return stringStream(fixtures.simpleString);
+  }
 });
 
 describe('When WritableStreamBuffer is written in two chunks', function() {
