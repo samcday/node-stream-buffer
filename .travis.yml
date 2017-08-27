@@ -3,7 +3,6 @@ env:
     - CC_TEST_REPORTER_ID=312e89cf7930ba8eb84cab19c637efb303e727f450839074e9861047ab935957
     - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
   matrix:
-    - NODE_VERSION=0.12
     - NODE_VERSION=4.2
     - NODE_VERSION=5.0
     - NODE_VERSION=6.5
