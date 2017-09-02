@@ -75,6 +75,18 @@ describe('A default ReadableStreamBuffer', function() {
     });
   });
 
+  it('supports putting in hex data', function(done) {
+    this.buffer.put('BEEF', 'hex');
+
+    var that = this;
+    this.buffer.once('readable', function() {
+      var buf = that.buffer.read();
+      expect(buf[0]).to.equal(190);
+      expect(buf[1]).to.equal(239);
+      done();
+    });
+  })
+
   describe('when writing binary data larger than initial backing buffer size', function() {
     beforeEach(function() {
       this.buffer.pause();
