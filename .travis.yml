@@ -9,6 +9,8 @@ matrix:
   - node_js: '0.12'
   - node_js: '4.2'
   - node_js: '5.0'
+  - node_js: '6.0'
+  - node_js: '8.4'
     env: npm_config_coverage=1
 addons:
   code_climate:
@@ -27,4 +29,4 @@ deploy:
   on:
     tags: true
     all_branches: true
-    node_js: 5.0
+    node_js: 8.4
