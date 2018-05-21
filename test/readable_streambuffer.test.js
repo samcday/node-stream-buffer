@@ -55,6 +55,23 @@ describe('A default ReadableStreamBuffer', function() {
     this.buffer.stop();
   });
 
+  it('pushes new data even if read when empty', function(done) {
+    var that = this;
+    var str = '';
+    this.buffer.on('readable', function() {
+      str += (that.buffer.read() || new Buffer(0)).toString('utf8');
+    });
+    this.buffer.on('end', function() {
+      expect(str).to.equal(fixtures.unicodeString);
+      done();
+    });
+
+    setTimeout(function() {
+      that.buffer.put(fixtures.unicodeString);
+      that.buffer.stop();
+    }, streamBuffer.DEFAULT_FREQUENCY + 1);
+  });
+
   describe('when writing binary data', function() {
     beforeEach(function(done) {
       var that = this;
