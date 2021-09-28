@@ -1,6 +1,6 @@
 # Node Stream Buffers
 
-[![Build Status][badge-travis-img]][badge-travis-url]
+[![Build Status][badge-actions-img]][badge-actions-url]
 [![npm][badge-npm-img]][badge-npm-url]
 
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
@@ -147,8 +147,8 @@ Thank you to all the [wonderful contributors](https://github.com/samcday/node-st
 
 node-stream-buffer is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
 
-[badge-travis-img]: https://github.com/samcday/node-stream-buffer/actions/workflows/node.js.yml/badge.svg
-[badge-travis-url]: https://travis-ci.org/samcday/node-stream-buffer
+[badge-actions-img]: https://github.com/samcday/node-stream-buffer/actions/workflows/node.js.yml/badge.svg
+[badge-actions-url]: https://github.com/samcday/node-stream-buffer/actions/workflows/node.js.yml
 [badge-npm-img]: https://img.shields.io/npm/dm/stream-buffers.svg
 [badge-npm-url]: https://www.npmjs.org/package/stream-buffers
 
