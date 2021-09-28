@@ -1,9 +1,6 @@
 # Node Stream Buffers
 
 [![Build Status][badge-travis-img]][badge-travis-url]
-[![Dependency Information][badge-david-img]][badge-david-url]
-[![Code Climate][badge-climate-img]][badge-climate-url]
-[![Code Coverage][badge-coverage-img]][badge-coverage-url]
 [![npm][badge-npm-img]][badge-npm-url]
 
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
@@ -144,24 +141,15 @@ Not supposed to be a speed demon, it's more for tests/debugging or weird edge ca
 
 ## Contributors
 
-Thanks to the following people for taking some time to contribute to this project.
-
- * Igor Dralyuk <idralyuk@ebay.com>
- * Simon Koudijs <simon.koudijs@intellifi.nl>
+Thank you to all the [wonderful contributors](https://github.com/samcday/node-stream-buffer/graphs/contributors) who have kept this package alive throughout the years.
 
 ## License
 
 node-stream-buffer is free and unencumbered public domain software. For more information, see the accompanying UNLICENSE file.
 
-[badge-travis-img]: http://img.shields.io/travis/samcday/node-stream-buffer.svg?style=flat-square
+[badge-travis-img]: https://github.com/samcday/node-stream-buffer/actions/workflows/node.js.yml/badge.svg
 [badge-travis-url]: https://travis-ci.org/samcday/node-stream-buffer
-[badge-david-img]: https://img.shields.io/david/samcday/node-stream-buffer.svg?style=flat-square
-[badge-david-url]: https://david-dm.org/samcday/node-stream-buffer
-[badge-climate-img]: http://img.shields.io/codeclimate/github/samcday/node-stream-buffer.svg?style=flat-square
-[badge-climate-url]: https://codeclimate.com/github/samcday/node-stream-buffer
-[badge-coverage-img]: http://img.shields.io/codeclimate/coverage/github/samcday/node-stream-buffer.svg?style=flat-square
-[badge-coverage-url]: https://codeclimate.com/github/samcday/node-stream-buffer
-[badge-npm-img]: https://img.shields.io/npm/dm/stream-buffers.svg?style=flat-square
+[badge-npm-img]: https://img.shields.io/npm/dm/stream-buffers.svg
 [badge-npm-url]: https://www.npmjs.org/package/stream-buffers
 
 [node-buffer-docs]: http://nodejs.org/api/buffer.html
