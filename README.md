@@ -9,6 +9,10 @@ Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to st
 npm install stream-buffers --save
 ```
 
+## Remark
+
+In a new project, consider using built-in Node 16 functions https://nodejs.org/dist/latest-v16.x/docs/api/webstreams.html#utility-consumers
+
 ## Usage
 
 To use the stream buffers in your module, simply import it and away you go.
