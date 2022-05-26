@@ -3,7 +3,7 @@
 [![Build Status][badge-actions-img]][badge-actions-url]
 [![npm][badge-npm-img]][badge-npm-url]
 
-**Consider using [Node 16+ Utility Consumers](https://nodejs.org/dist/latest-v16.x/docs/api/webstreams.html#utility-consumers) rather than this library**
+**!! Consider using [Node 16+ Utility Consumers](https://nodejs.org/dist/latest-v16.x/docs/api/webstreams.html#utility-consumers) rather than this library. !!**
 
 Simple Readable and Writable Streams that use a [Buffer][node-buffer-docs] to store received data, or for data to send out. Useful for test code, debugging, and a wide range of other utilities.
 
