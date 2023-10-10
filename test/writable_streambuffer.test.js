@@ -1,8 +1,9 @@
 'use strict';
 
-var expect = require('chai').expect;
-var fixtures = require('./fixtures');
-var streamBuffer = require('../lib/streambuffer.js');
+import chai from 'chai';
+import * as fixtures from './fixtures.js';
+import * as streamBuffer from '../lib/streambuffer.js';
+const { expect } = chai;
 
 describe('WritableStreamBuffer with defaults', function() {
   beforeEach(function() {
