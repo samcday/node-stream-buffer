@@ -2,6 +2,7 @@
   "name": "stream-buffers",
   "version": "3.0.2",
   "description": "Buffer-backed Streams for reading and writing.",
+  "type": "module",
   "keywords": [
     "memory streams",
     "streams",

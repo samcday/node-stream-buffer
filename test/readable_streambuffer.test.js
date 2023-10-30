@@ -1,8 +1,10 @@
 'use strict';
 
-var expect = require('chai').expect;
-var fixtures = require('./fixtures');
-var streamBuffer = require('../lib/streambuffer');
+import chai from 'chai';
+import * as fixtures from './fixtures.js';
+import * as streamBuffer from '../lib/streambuffer.js';
+import * as stream from 'stream';
+const { expect } = chai;
 
 describe('A default ReadableStreamBuffer', function() {
   beforeEach(function() {
@@ -10,7 +12,7 @@ describe('A default ReadableStreamBuffer', function() {
   });
 
   it('is a Stream', function() {
-    expect(this.buffer).to.be.an.instanceOf(require('stream').Stream);
+    expect(this.buffer).to.be.an.instanceOf(stream.Stream);
   });
 
   it('is empty by default', function() {
