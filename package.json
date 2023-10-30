@@ -1,6 +1,6 @@
 {
-  "name": "stream-buffers",
-  "version": "3.0.2",
+  "name": "stream-buffers-es",
+  "version": "0.0.1",
   "description": "Buffer-backed Streams for reading and writing.",
   "type": "module",
   "keywords": [
@@ -22,7 +22,7 @@
   "license": "Unlicense",
   "repository": {
     "type": "git",
-    "url": "https://github.com/samcday/node-stream-buffer.git"
+    "url": "https://github.com/hsorbo/node-stream-buffer.git"
   },
   "scripts": {
     "test": "istanbul test _mocha",
